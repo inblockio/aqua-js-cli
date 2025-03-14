@@ -22,7 +22,7 @@ import {
 const opts = {
   // This is required so that -v is position independent.
   boolean: ["v", "scalar", "rm", "graph", "content"],
-  string: ["sign", "link", "witness" ],
+  string: ["sign", "link", "witness", "cred" ],
 }
 
 const usage = () => {
@@ -63,6 +63,8 @@ Options:
     Use this flag to switch between metamask and cli wallet when witnessing 
   --graph 
     Use this flag to generate a graph of the aqua tree in the console/terminal
+  --cred <credentials.json file>
+    the file to read credentials from
 
 Example :
   1. Notarize a file
@@ -122,6 +124,7 @@ const enableForm = argv["form"];
 let network = argv["network"];
 let witness_platform_type = argv["type"];
 let showGraph = argv["graph"];
+const credentialsFile = argv["cred"] || "credentials.json";
 
 
 
@@ -269,7 +272,7 @@ export async function run(argvData: minimist.ParsedArgs = argv) {
     process.exit(1)
   }
 
-  const creds = readCredentials()
+  const creds = readCredentials(credentialsFile)
   const aquaTreeWrapper = readAndCreateAquaTreeAndAquaTreeWrapper(fileNameOnly, revisionHashSpecified)
   if (revisionType == "file") {
     let alreadyNotarized = aquafier.checkIfFileAlreadyNotarized(aquaTreeWrapper.aquaTree, aquaTreeWrapper.aquaTreeWrapper.fileObject)

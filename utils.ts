@@ -15,11 +15,11 @@ import Aquafier, {
 } from "aqua-js-sdk";
 import * as formatter from "./formatter.js";
 
-export function readCredentials(createWallet = true) {
+export function readCredentials(credentialsFile = "credentials.json", createWallet = true) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
 
-  let filePath = `${__dirname}/credentials.json`;
+  let filePath = `${__dirname}/${credentialsFile}`;
 
   if (existsSync(filePath)) {
     return JSON.parse(readFileSync(filePath, "utf8"));
