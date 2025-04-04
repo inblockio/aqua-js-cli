@@ -129,7 +129,6 @@ const credentialsFile = argv["cred"] || "credentials.json";
 
 
 (async function () {
-
   await run();
 })()
 

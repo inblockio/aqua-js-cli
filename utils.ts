@@ -1,7 +1,7 @@
 import { Mnemonic } from "ethers";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path, { dirname } from "path";
 import crypto from "crypto";
 import * as fs from "fs";
 import Aquafier, {
@@ -99,9 +99,9 @@ export const createGenesisRevision = async (
     process.exit(1);
   }
 
-  const fileContent = fs.readFileSync(aquaFilename.replace(".aqua.json", ""), {
-    encoding: "utf-8",
-  });
+  const fileName =aquaFilename.replace(".aqua.json", "")
+  const fileContent =  readFileContent(fileName)
+
   let fileObject = {
     fileName: aquaFilename.replace(".aqua.json", ""),
     fileContent: fileContent,
@@ -437,4 +437,55 @@ export async function readExportFile(
     process.exit(1);
   }
   return offlineData;
+}
+
+
+
+
+/**
+ * Determines if a file is a text file based on its extension
+ * @param {string} filePath - Path to the file
+ * @returns {boolean} - Whether the file is a text file
+ */
+function isTextFile(filePath: string) {
+  // Get the file extension
+  const ext = path.extname(filePath).toLowerCase();
+  
+  // Common text file extensions
+  const textExtensions = [
+    // Programming languages
+    '.txt', '.csv', '.json', '.xml', '.html', '.htm', '.css', '.js', '.jsx', '.ts', '.tsx',
+    '.md', '.markdown', '.rs', '.py', '.rb', '.c', '.cpp', '.h', '.hpp', '.cs', '.java',
+    '.kt', '.kts', '.swift', '.php', '.go', '.pl', '.pm', '.lua', '.sh', '.bash', '.zsh',
+    '.sql', '.r', '.dart', '.scala', '.groovy', '.m', '.mm',
+
+    // Config files
+    '.yml', '.yaml', '.toml', '.ini', '.cfg', '.conf', '.config', '.properties',
+    '.env', '.gitignore', '.gitattributes', '.editorconfig', '.babelrc', '.eslintrc',
+    '.prettierrc', '.stylelintrc', '.npmrc', '.yarnrc',
+
+    // Documentation
+    '.rst', '.adoc', '.tex', '.latex', '.rtf', '.log', '.svg',
+
+    // Data formats
+    '.csv', '.tsv', '.plist', '.graphql', '.gql'
+  ];
+
+  return textExtensions.includes(ext);
+}
+
+/**
+ * Reads file content as string or Uint8Array based on file type
+ * @param {string} filePath - Path to the file
+ * @returns {string|Uint8Array} - File content as string for text files or Uint8Array for binary files
+ */
+function readFileContent(filePath: string) {
+  if (isTextFile(filePath)) {
+    // If it's a text file, read as text
+    return fs.readFileSync(filePath, { encoding: 'utf-8' });
+  } else {
+    // Otherwise for binary files, read as Buffer and convert to Uint8Array
+    const buffer = fs.readFileSync(filePath);
+    return new Uint8Array(buffer);
+  }
 }
