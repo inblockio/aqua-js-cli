@@ -1,7 +1,6 @@
 import { Mnemonic } from "ethers";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
+// import path, { dirname } from "path";
 import crypto from "crypto";
 import * as fs from "fs";
 import Aquafier, {
@@ -15,9 +14,30 @@ import Aquafier, {
 } from "aqua-js-sdk";
 import * as formatter from "./formatter.js";
 
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+export function getFilePath() {
+  try {
+    // Try ESM approach
+    const url = import.meta.url;
+    const __filename = fileURLToPath(url);
+    const __dirname = path.dirname(__filename);
+    return { __filename, __dirname };
+  } catch (e) {
+    // Fallback for CommonJS
+    return { 
+      __filename: '', 
+      __dirname: process.cwd() 
+    };
+  }
+}
+
 export function readCredentials(credentialsFile = "credentials.json", createWallet = true) {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  // const __filename = fileURLToPath(import.meta.url);
+  // const __dirname = dirname(__filename);
+
+  const { __filename, __dirname } = getFilePath();
 
   let filePath = `${__dirname}/${credentialsFile}`;
 

@@ -4,9 +4,9 @@
     ],
     "compilerOptions": {
         "target": "ES2020",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        // "outDir": "dist",
+        "module": "Node16", // Changed from ESNext to CommonJS to node16
+        "moduleResolution": "node16", // Changed from bundler to node to node16
+        "outDir": "dist", // Uncommented to specify output directory
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,

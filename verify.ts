@@ -37,10 +37,6 @@ const verbose = argv.v
 const server = argv.server ? argv.server : "http://localhost:9352"
 
 
-
-
-
-
 export async function run(argvData: minimist.ParsedArgs = argv) {
   if (argvData.graph) {
     console.log("The graph")

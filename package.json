@@ -6,16 +6,40 @@
   "types": "index.d.ts",
   "type": "module",
   "dependencies": {
-    "aqua-js-sdk": "github:inblockio/aqua-js-sdk#49d6d7e6b09e2935e383a27fe37cf8f74a82bbe2",
+    "aqua-js-sdk": "^3.2.1-1",
     "ethers": "^6.13.5",
     "http-status-codes": "^2.2.0",
     "minimist": "^1.2.8",
     "tsup": "^8.4.0"
   },
+  "bin": {
+    "aqua": "./aqua.js"
+  },
+  "pkg": {
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "dist",
+    "scripts": "./dist/aqua.cjs",
+    "assets": [
+      "node_modules/aqua-js-sdk/**/*",
+      "node_modules/dids/**/*",
+      "node_modules/key-did-provider-ed25519/**/*",
+      "node_modules/key-did-resolver/**/*",
+      "node_modules/open/**/*",
+      "node_modules/dag-jose-utils/**/*"
+    ]
+  },
   "scripts": {
     "dev": "tsup",
     "build": "tsc",
     "local": "npm link aqua-js-sdk && tsc",
+
+    "build-bundle": "tsup --format cjs --dts --no-splitting --target=node16",
+    "pkg-debug": "pkg ./dist/aqua.cjs -d --targets node16-linux-x64,node16-macos-x64,node16-win-x64 --output dist/aqua-debug",
+    "build-executables-fix": "npm run build-bundle && npm run pkg-debug && pkg ./dist/aqua.cjs --targets node16-linux-x64,node16-macos-x64,node16-win-x64 --output dist/aqua",
     "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,6 +55,7 @@
   "homepage": "https://github.com/inblockio/data-accounting-external-verifier#readme",
   "devDependencies": {
     "@types/minimist": "^1.2.5",
+    "pkg": "^5.8.1",
     "prettier": "^3.3.3",
     "typescript": "5.1.6"
   },
