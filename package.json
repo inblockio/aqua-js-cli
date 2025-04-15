@@ -64,10 +64,13 @@
     "sigstore": "^3.0.0"
   },
   "files": [
-    "checkEtherScan.js",
-    "formatter.js",
-    "index.js",
-    "index.d.ts",
+    "aqua.ts",
+    "notarize.ts",
+    "verify.ts",
+    "formatter.ts",
+    "form_updater.ts",
+    "index.ts",
+    "utils.ts",
     "LICENSE",
     "package.json",
     "README.md"

@@ -14,8 +14,8 @@ install node [here](https://nodejs.org/en/download)
 ## Getting started 
 1. `npm install`
 2. `npm run build`
-3. follow usage command. 
-
+3.  use `aqua.js in dist file` follow usage command. 
+4.  You can also build a standalon binary using `build:bin`, subsittute 
 
 ## Usage
 ### 1. Notarizing / Signing / Witnessing a file
@@ -23,46 +23,46 @@ install node [here](https://nodejs.org/en/download)
 To notarize a file use the following command
 
 ```bash 
-./notarize.js <FILE_PATH>
+./aqua.js notarize <FILE_PATH>
 ```
 
 ie 
 
 ```bash 
-./notarize.js ./LICENSE
+./aqua.js notarize ./LICENSE
 ```
 
 
 To sign a file use the following command
 
 ```bash
-./notarize.js --sign [cli|metamask|did] <FILE_PATH>
+./aqua.js notarize --sign [cli|metamask|did] <FILE_PATH>
 ```
 
 ie 
 
 ```bash
-./notarize.js --sign cli ./LICENSE
+./aqua.js  notarize  --sign cli ./LICENSE
 ```
 
 
 To witness a file, use the following command
 
 ```bash
-./notarize.js [--witness eth|--witness nostr|--witness tsa] <FILE_PATH>
+./aqua.js  notarize  [--witness eth|--witness nostr|--witness tsa] <FILE_PATH>
 ```
 
 ie
 
 ```bash
-./notarize.js  ./LICENSE --witness eth
+./aqua.js  notarize ./LICENSE --witness eth
 ```
 
 To witness multiple aqua chains 
 
 ie 
 ```bash
-./notarize.js LICENSE,README.md --witness eth --vtree --type sepolia
+./aqua.js notarize LICENSE,README.md --witness eth --vtree --type sepolia
 ```
 
 
@@ -70,7 +70,7 @@ ie
 To witness multiple file with specific revision 
 ie 
 ```bash
-./notarize.js LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth  --type cli --vtree
+./notarize.js notarize LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth  --type cli --vtree
 ```
 
 
@@ -79,13 +79,13 @@ ie
 To verify an aqua chain use the following command
 
 ```bash
-./verify.js <AQUA_CHAIN_FILE_PATH>
+./aqua.js verify <AQUA_CHAIN_FILE_PATH>
 ```
 
 ie
 
 ```bash
-./verify.js LICENSE.aqua.json
+./aqua.js verify LICENSE.aqua.json
 ```
 
 #### 2.1. Verification Options
@@ -95,7 +95,7 @@ ie
 Use the `-v` for result versboseness ie
 
 ```bash
-./verify.js LICENSE.aqua.json -v
+./aqua.js verify LICENSE.aqua.json -v
 ```
 
 ##### 2.1.2. `--ignore-merkle-proof` - Ignore verifying the witness merkle proof of each revision
@@ -103,7 +103,7 @@ Use the `-v` for result versboseness ie
 Use the `--ignore-merkle-proof` for ignore verifying merkle proof of each revision. Verification is faster ie
 
 ```bash
-./verify.js LICENSE.aqua.json --ignore-merkle-proof
+./aqua.js verify LICENSE.aqua.json --ignore-merkle-proof
 ```
 
 ### 3. Deleting a revision from Aqua Chain
@@ -111,13 +111,13 @@ Use the `--ignore-merkle-proof` for ignore verifying merkle proof of each revisi
 This will delete the last revision from an aqua chain
 
 ```bash
-./notarize.js --remove <FILE_PATH>
+./aqua.js notarize --remove <FILE_PATH>
 ```
 
 ie
 
 ```bash
-./notarize.js --remove ./LICENSE
+./aqua.js  notarize --remove ./LICENSE
 ```
 
 
@@ -126,13 +126,13 @@ ie
 To link an Aqua chain to another use the `--link` option as follows
 
 ```bash
-./notarize.js  <FILE_PATH>  --link  <FILE_PATH.aqua.json>
+./aqua.js notarize  <FILE_PATH>  --link  <FILE_PATH.aqua.json>
 ```
 
 ie
 
 ```bash
-./notarize.js   --link ./LICENSE ./README.md.aqua.json
+./aqua.js notarize   --link ./LICENSE ./README.md.aqua.json
 ```
 
 This will link `README.md.aqua.json` to `LICENSE` file and it will be written into `LICENSE.aqua.json` file
@@ -143,7 +143,7 @@ This will link `README.md.aqua.json` to `LICENSE` file and it will be written in
 To generate a `content` revision you run the following command
 
 ```bash
-./notarize.js --content ./LICENSE
+./aqua.js notarize --content ./LICENSE
 ```
 
 ### 6. Generating a Scalar revision
@@ -152,7 +152,7 @@ To generate a `content` revision you run the following command
 
 
 ```bash
-./notarize.js --scalar ./LICENSE
+./aqua.js notarize --scalar ./LICENSE
 ```
 
 ### 7.  Forms 
