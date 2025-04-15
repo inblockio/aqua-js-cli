@@ -70,7 +70,7 @@ ie
 To witness multiple file with specific revision 
 ie 
 ```bash
-./notarize.js notarize LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth  --type cli --vtree
+./aqua.js notarize LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth  --type cli --vtree
 ```
 
 
