@@ -2,9 +2,9 @@
   "name": "data-accounting-external-verifier",
   "version": "1.0.9",
   "description": "JS Client for external verifier.  Goal: A shared library supports a commandline execution and a chrome-extension which is implementation independent. So the verify.js will support not only the mediawiki integration but potentially other third party integrations of the verification procedure.",
-  "main": "index.js",
+  "main": "dist/aqua.js",
   "types": "index.d.ts",
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "aqua-js-sdk": "^3.2.1-1",
     "ethers": "^6.13.5",
@@ -17,10 +17,27 @@
     "aqua": "./dist/aqua.js"
   },
   "scripts": {
-    "build-bundle": "tsup aqua.ts --format cjs --dts --no-splitting --target=node16",
-    "build": "npm run build-bundle && nexe ./dist/aqua.cjs --build --output ./dist/aqua",
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "local": "npm link aqua-js-sdk && tsup",
     "prepare": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:bin": "npm run build && pkg .",
+    "build:bin:all": "npm run build && pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
+  },
+  "pkg": {
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "binaries",
+    "assets": [
+      "dist/**/*"
+    ],
+    "scripts": [
+      "dist/**/*.js"
+    ]
   },
   "repository": {
     "type": "git",
@@ -34,6 +51,7 @@
   "homepage": "https://github.com/inblockio/data-accounting-external-verifier#readme",
   "devDependencies": {
     "@types/minimist": "^1.2.5",
+    "pkg": "^5.8.1",
     "prettier": "^3.3.3",
     "typescript": "5.1.6"
   },

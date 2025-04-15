@@ -1,3 +1,4 @@
+binaries/
 dist/
 node_modules
 *.js

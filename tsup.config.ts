@@ -2,14 +2,13 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: ['aqua.ts'],
-  format: ['esm', 'cjs'], // Build both formats
-  dts: true,
+  format: ['cjs'],
   clean: true,
+  dts: true,
+  splitting: false,
+  sourcemap: true,
+  minify: true,
+  target: 'node18',
   outDir: 'dist',
-  // This tells tsup to generate separate .mjs files for ESM
-  outExtension({ format }) {
-    return {
-      js: format === 'esm' ? '.mjs' : '.cjs',
-    };
-  },
+  noExternal: ['aqua-js-sdk'],
 });
