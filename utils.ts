@@ -440,17 +440,20 @@ export const revisionWithMultipleAquaChain = async (
 
 export async function readExportFile(
   filename: string,
-): Promise<string | AquaTree> {
+): Promise<string | AquaTree  | Uint8Array> {
   if (!fs.existsSync(filename)) {
     formatter.log_red(`ERROR: The file ${filename} does not exist.`);
     process.exit(1);
   }
-  const fileContent = fs.readFileSync(filename, "utf-8");
   if (!filename.endsWith("aqua.json")) {
     //   formatter.log_red("The file must have a .json extension")
     //   process.exit(1)
-    return fileContent;
+    // const fileContent = fs.readFileSync(filename, "binary")
+    // return fileContent;
+    const buffer = fs.readFileSync(filename);
+    return new Uint8Array(buffer);
   }
+  const fileContent = fs.readFileSync(filename, "utf-8");
   const offlineData = JSON.parse(fileContent);
   if (!("revisions" in offlineData)) {
     formatter.log_red("The json file doesn't contain 'revisions' key.");
