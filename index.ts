@@ -34,11 +34,11 @@ export async function verifyAquaTreeData(fileName: string, verboseOption: boolea
   let filesToBeRead = aquafier.fetchFilesToBeRead(aquaTree);
   // console.log(`filesToBeRead ${JSON.stringify(filesToBeRead)}`);
   let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray, basePath);
- 
+
   // let fileObjectItem = fileObjectsArraySecondary.find((e) => e.fileName == 'sample_2.txt')
-//   if (fileObjectItem == undefined) {
-// console.log('dammn')
-// return 
+  //   if (fileObjectItem == undefined) {
+  // console.log('dammn')
+  // return 
   // }
   let result = await aquafier.verifyAquaTree(aquaTree, fileObjectsArraySecondary);
 
@@ -59,28 +59,28 @@ export async function verifyAquaTreeData(fileName: string, verboseOption: boolea
 
 
 async function readAllNecessaryFiles(
-  filesToBeRead: string[], 
-  aquafier: Aquafier, 
-  fileObjectsArray: FileObject[], 
+  filesToBeRead: string[],
+  aquafier: Aquafier,
+  fileObjectsArray: FileObject[],
   basePath: string = ""
 ): Promise<FileObject[]> {
   // if aqua tree contains link all the linked aqua files must be read into the fileObjects Array
 
   for (let item of filesToBeRead) {
     const fullPath = basePath ? path.join(basePath, item) : item;
-    
+
     // Get just the filename without path for comparison and storage
     const itemBaseName = path.basename(item);
-    
+
     if (fileObjectsArray.find((e) => e.fileName === itemBaseName)) {
       // console.log(` File ${itemBaseName} has been read`)
     } else {
       const aquaFile = item.endsWith(".aqua.json") ? fullPath : fullPath + ".aqua.json";
-      
+
       // raw file
       const pureFileNameItem = itemBaseName.replace(".aqua.json", "");
       const pureFilePath = basePath ? path.join(basePath, pureFileNameItem) : pureFileNameItem;
-      
+
       console.log(`-> reading pure file ${pureFilePath}`);
       let fileContentsItem = await readExportFile(pureFilePath, false);
       fileObjectsArray.push({
@@ -93,29 +93,29 @@ async function readAllNecessaryFiles(
         // aqua file
         console.log(`-> reading aqua file ${aquaFile}`);
         let fileContentsAquaFile = await readExportFile(aquaFile, false);
-        
+
         // Use just the basename for the aqua file, not the full path
         const aquaFileBaseName = path.basename(aquaFile);
-        
+
         fileObjectsArray.push({
           fileName: aquaFileBaseName,
           fileContent: fileContentsAquaFile,
           path: basePath
         });
-        
+
         // Get directory of the current aqua file to use as base path for linked files
         const aquaFileDir = path.dirname(aquaFile);
-        
+
         let _filesToBeRead = aquafier.fetchFilesToBeRead(fileContentsAquaFile);
         // Since we're returning an array not appending, we should assign the result
         let linkedFiles = await readAllNecessaryFiles(_filesToBeRead, aquafier, fileObjectsArray, aquaFileDir);
-        
+
         // Don't push the result, as the recursive call already updates fileObjectsArray
         // fileObjectsArray.push(...res); - This line is removed
       }
     }
   }
-  console.log(`Files to be read ${JSON.stringify(fileObjectsArray, null, 4)}`)
+
   return fileObjectsArray;
 }
 
@@ -140,7 +140,7 @@ export async function verifyAndGetGraphData(fileName: string, verboseOption: boo
 
   let filesToBeRead = aquafier.fetchFilesToBeRead(aquaTree)
 
- 
+
   let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray)
   // fileObjectsArray.push(...fileObjectsArraySecondary)
 
