@@ -2,8 +2,8 @@
 
 test_description='Test file verification functionality'
 
-notarize="repo/notarize.js"
-verify="repo/verify.js"
+notarize="repo/dist/aqua.js notarize"
+verify="repo/dist/aqua.js verify"
 
 . ./tests/sharness/sharness.sh
 

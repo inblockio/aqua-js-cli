@@ -4,8 +4,8 @@ test_description='Test file linking functionality'
 
 . ./tests/sharness/sharness.sh
 
-notarize="repo/notarize.js"
-verify="repo/verify.js"
+notarize="repo/dist/aqua.js notarize"
+verify="repo/dist/aqua.js verify"
 
 test_expect_success 'Setup test environment' '
     ln -s $(git rev-parse --show-toplevel) ./repo &&
