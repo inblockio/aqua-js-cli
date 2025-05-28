@@ -47,8 +47,8 @@ Options:
     Use this flag to use a more lightweight, "scalar" aquafication.
     This is the default option.
   --tree
-    Use this flag to use to create a verification tree.
-    This option is slower than scalar but provides a better garantee.
+    Use this flag to create a verification tree.
+    This option is slower than scalar but provides a better guarantee.
   --content
     Use this flag to include the content file instead of just its hash and name
   --rm
@@ -60,39 +60,39 @@ Options:
   --network
     Use this flag to switch between 'mainnet' and 'sepolia' when witnessing
   --type 
-    Use this flag to switch between metamask and cli wallet when witnessing 
+    Use this flag to switch between metamask and cli wallet when witnessing
   --graph 
     Use this flag to generate a graph of the aqua tree in the console/terminal
   --cred <credentials.json file>
-    the file to read credentials from
+    The file to read credentials from
 
-Example :
+Examples:
   1. Notarize a file
      -> using --tree option to have verification hash leaves
-      ./notarize.js README.md --tree
-     -> create a gensis revision tha is a form 
-       ./notarize.js README.md --form  README.md
+      ./dist/aqua.js  notarize README.md --tree
+     -> create a genesis revision that is a form 
+       ./dist/aqua.js  notarize README.md --form README.md
 
-  2. verify an aqua tree 
+  2. Verify an aqua tree 
       ./verify README.md
 
   3. Witness
-    -> multple aqua trees using eth option  
-      ./notarize.js LICENSE,README.md --witness eth --tree --network sepolia
+    -> multiple aqua trees using eth option  
+      ./dist/aqua.js  notarize LICENSE,README.md --witness eth --tree --network sepolia
 
   4. Signing 
-    -> using metemask 
-      ./notarize.js --sign metamask <FILE_PATH>
+    -> using metamask 
+      ./dist/aqua.js  notarize --sign metamask <FILE_PATH>
     -> using cli 
-      ./notarize.js --sign cli <FILE_PATH>
+      ./dist/aqua.js  notarize --sign cli <FILE_PATH>
 
   5. Linking 
     -> Linking a single aqua tree to another single aqua tree 
-      ./notarize.js  <FILE_PATH>  --link  <FILE_PATH>
-    -> Linking a multiple aqua tree to another single aqua tree 
-      ./notarize.js  <FILE_PATH>,<FILE_PATH>  --link  <FILE_PATH>
-    -> Linking a single aqua tree to another multiple aqua tree 
-      ./notarize.js  <FILE_PATH> --link  <FILE_PATH>,<FILE_PATH> 
+      ./dist/aqua.js  notarize <FILE_PATH> --link <FILE_PATH>
+    -> Linking multiple aqua trees to another single aqua tree 
+      ./dist/aqua.js  notarize <FILE_PATH>,<FILE_PATH> --link <FILE_PATH>
+    -> Linking a single aqua tree to multiple aqua trees 
+      ./dist/aqua.js  notarize <FILE_PATH> --link <FILE_PATH>,<FILE_PATH> 
    
 `)
 }

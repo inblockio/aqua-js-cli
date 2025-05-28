@@ -12,16 +12,12 @@ const argv = minimist(process.argv.slice(2), opts)
 
 function usage() {
   console.log(`Usage:
-verify.js [OPTIONS] <file name>
-or
-verify.js [OPTIONS] --api <page title>
+  ./dist/aqua.js verify [OPTIONS] <filename>
 
-Options:
-  -v                     Verbose
-  --server               <The url of the server, e.g. https://pkc.inblock.io>
-  --api                 (If present) The title to read from for the data
-  --graph                To show the graph data
-If the --server is not specified, it defaults to http://localhost:9352`)
+  Options:
+    -v                     Verbose
+    --graph                Show the graph data
+`)
 }
 
 // This should be a commandline argument for specifying the title of the page
@@ -34,7 +30,7 @@ if (argv._.length < 1) {
 
 const verbose = argv.v
 
-const server = argv.server ? argv.server : "http://localhost:9352"
+// const server = argv.server ? argv.server : "http://localhost:9352"
 
 
 export async function run(argvData: minimist.ParsedArgs = argv) {

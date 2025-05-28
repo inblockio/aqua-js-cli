@@ -14,10 +14,13 @@ import {
   revisionWithMultipleAquaChain
 } from "./utils.js";
 import { verifyAndGetGraphData, verifyAquaTreeData } from "./index.js";
+import { runFormUpdater, formUpdaterUsage } from "./form_updater.js";
 
 // Parse the command and subcommand structure
 const mainCommand = process.argv[2];
-const args = process.argv.slice(mainCommand === "notarize" || mainCommand === "verify" ? 3 : 2);
+const args = process.argv.slice(
+  mainCommand === "notarize" || mainCommand === "verify" || mainCommand === "form_updater" ? 3 : 2
+);
 
 // Define options for both commands
 const notarizeOpts = {
@@ -30,28 +33,35 @@ const verifyOpts = {
   string: ["server", "api"],
 };
 
+const formUpdaterOpts = {
+  string: ["delete", "update"],
+};
+
 // Main usage function
 function usage() {
   console.log(`Usage:
-aqua.js [COMMAND] [OPTIONS] <filename>
+./dist/aqua.js   [COMMAND] [OPTIONS] <filename>
 
 Commands:
-  notarize    Create or update an AQUA file for a document
-  verify      Verify an AQUA file
+  notarize       Create or update an AQUA file for a document
+  verify         Verify an AQUA file
+  form_updater   Update or delete form fields in an AQUA file
 
 For command-specific help:
-  aqua.js notarize --help
-  aqua.js verify --help
+  ./dist/aqua.js   notarize --help
+  ./dist/aqua.js   verify --help
+  ./dist/aqua.js   form_updater --help
 
 Examples:
-  aqua.js notarize README.md --tree
-  aqua.js verify README.md`);
+  ./dist/aqua.js   notarize README.md --tree
+  ./dist/aqua.js   verify README.md
+  ./dist/aqua.js   form_updater example.aqua.json --delete forms-name`);
 }
 
 // Notarize usage function
 function notarizeUsage() {
   console.log(`Usage:
-aqua.js notarize [OPTIONS] <filename>
+./dist/aqua.js   notarize [OPTIONS] <filename>
 which generates filename.aqua.json
 
 Options:
@@ -93,35 +103,35 @@ Options:
 Example :
   1. Notarize a file
      -> using --tree option to have verification hash leaves
-      aqua.js notarize README.md --tree
+      ./dist/aqua.js   notarize README.md --tree
      -> create a gensis revision tha is a form 
-      aqua.js notarize README.md --form README.md
+      ./dist/aqua.js   notarize README.md --form README.md
 
   2. Witness
     -> multple aqua trees using eth option  
-      aqua.js notarize LICENSE,README.md --witness eth --tree --network sepolia
+      ./dist/aqua.js   notarize LICENSE,README.md --witness eth --tree --network sepolia
 
   3. Signing 
     -> using metemask 
-      aqua.js notarize --sign metamask <FILE_PATH>
+      ./dist/aqua.js   notarize --sign metamask <FILE_PATH>
     -> using cli 
-      aqua.js notarize --sign cli <FILE_PATH>
+      ./dist/aqua.js   notarize --sign cli <FILE_PATH>
 
   4. Linking 
     -> Linking a single aqua tree to another single aqua tree 
-      aqua.js notarize <FILE_PATH> --link <FILE_PATH>
+      ./dist/aqua.js   notarize <FILE_PATH> --link <FILE_PATH>
     -> Linking a multiple aqua tree to another single aqua tree 
-      aqua.js notarize <FILE_PATH>,<FILE_PATH> --link <FILE_PATH>
+      ./dist/aqua.js   notarize <FILE_PATH>,<FILE_PATH> --link <FILE_PATH>
     -> Linking a single aqua tree to another multiple aqua tree 
-      aqua.js notarize <FILE_PATH> --link <FILE_PATH>,<FILE_PATH>`);
+      ./dist/aqua.js   notarize <FILE_PATH> --link <FILE_PATH>,<FILE_PATH>`);
 }
 
 // Verify usage function
 function verifyUsage() {
   console.log(`Usage:
-aqua.js verify [OPTIONS] <file name>
+./dist/aqua.js   verify [OPTIONS] <file name>
 or
-aqua.js verify [OPTIONS] --api <page title>
+./dist/aqua.js   verify [OPTIONS] --api <page title>
 
 Options:
   -v                     Verbose
@@ -132,9 +142,9 @@ Options:
 If the --server is not specified, it defaults to http://localhost:9352
 
 Examples:
-  aqua.js verify README.md
-  aqua.js verify README.md --graph
-  aqua.js verify --api "My Document" --server https://example.com`);
+  ./dist/aqua.js   verify README.md
+  ./dist/aqua.js   verify README.md --graph
+  ./dist/aqua.js   verify --api "My Document" --server https://example.com`);
 }
 
 // Process help flags before other parsing
@@ -143,6 +153,8 @@ if (args.includes("--help") || args.includes("-h")) {
     notarizeUsage();
   } else if (mainCommand === "verify") {
     verifyUsage();
+  } else if (mainCommand === "form_updater") {
+    formUpdaterUsage();
   } else {
     usage();
   }
@@ -157,6 +169,11 @@ async function main() {
   } else if (mainCommand === "verify") {
     const argv = minimist(args, verifyOpts);
     await runVerify(argv);
+
+  } else if (mainCommand === "form_updater") {
+    const argv = minimist(args, verifyOpts);
+    await runFormUpdater(argv);
+
   } else {
     // If no explicit command was provided, try to use the first arg as filename
     // and default to notarize
@@ -170,6 +187,7 @@ async function main() {
     }
   }
 }
+
 
 async function runNotarize(argv: minimist.ParsedArgs) {
   const filename = argv._[0];
