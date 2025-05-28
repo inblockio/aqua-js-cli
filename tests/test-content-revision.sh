@@ -1,6 +1,6 @@
 
 test_description='Test file modifications and notarization with index updates'
-
+ 
 echo "Current Path: $(pwd)"
 . ./tests/sharness/sharness.sh
 

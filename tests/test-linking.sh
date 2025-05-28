@@ -11,7 +11,7 @@ test_expect_success 'Setup test environment' '
     ln -s $(git rev-parse --show-toplevel) ./repo &&
     cp repo/README.md README.md &&
     cp repo/LICENSE LICENSE &&
-    cp repo/notarize.js notarize.js
+    cp repo/notarize.ts notarize.ts
 '
 
 test_expect_success 'Create AQUA file for README.md' '
@@ -24,13 +24,13 @@ test_expect_success 'Create AQUA file for LICENSE' '
     test -f LICENSE.aqua.json
 '
 
-test_expect_success 'Create AQUA file for notarize.js' '
-    $notarize notarize.js &&
-    test -f notarize.js.aqua.json
+test_expect_success 'Create AQUA file for notarize.ts' '
+    $notarize notarize.ts &&
+    test -f notarize.ts.aqua.json
 '
 
 test_expect_success 'Create link between files' '
-    $notarize --link LICENSE,notarize.js README.md &&
+    $notarize --link LICENSE,notarize.ts README.md &&
     test -f README.md.aqua.json
 '
 
@@ -42,10 +42,10 @@ test_expect_success 'Verify linked README.md' '
 test_expect_success 'Cleanup test files' '
     rm -f README.md.aqua.json &&
     rm -f LICENSE.aqua.json &&
-    rm -f notarize.js.aqua.json &&
+    rm -f notarize.ts.aqua.json &&
     rm -f README.md &&
     rm -f LICENSE &&
-    rm -f notarize.js
+    rm -f notarize.ts
 '
 
 test_done 

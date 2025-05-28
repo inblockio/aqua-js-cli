@@ -7,9 +7,9 @@ test_description='Test form notarization, verification, and updates'
 project_root=$(git rev-parse --show-toplevel)
 
 # Set up paths relative to the project root
-notarize="${project_root}/notarize.js"
-verify="${project_root}/verify.js"
-form_updater="${project_root}/form_updater.js"
+notarize="${project_root}/dist/aqua.js notarize"
+verify="${project_root}/dist/aqua.js verify"
+form_updater="${project_root}/dist/aqua.js form_updater"
 example_form="${project_root}/tests/form_testdata/example-form.json"
 example_form_attestation="${project_root}/tests/form_testdata/example-form-attestation.json"
 

@@ -11,7 +11,7 @@ test_expect_success 'Setup test environment' '
     ln -s $(git rev-parse --show-toplevel) ./repo &&
     cp repo/README.md README.md &&
     cp repo/LICENSE LICENSE &&
-    cp repo/notarize.js notarize.js
+    cp repo/notarize.ts notarize.ts
 '
 
 test_expect_success 'Check README.md'  '
@@ -30,29 +30,29 @@ test_expect_success 'Sign README.md' '
 
 
 
-test_expect_success 'Check notarize.js'  '
-    test -f notarize.js
+test_expect_success 'Check notarize.ts'  '
+    test -f notarize.ts
 '
 
-test_expect_success 'Create AQUA file for notarize.js' '
-    $notarize notarize.js &&
-    test -f notarize.js.aqua.json
+test_expect_success 'Create AQUA file for notarize.ts' '
+    $notarize notarize.ts &&
+    test -f notarize.ts.aqua.json
 '
 
 
-test_expect_success 'Witness notarize.js.aqua.json' '
-    $notarize notarize.js  --sign did &&
-    test -f notarize.js.aqua.json
+test_expect_success 'Witness notarize.ts.aqua.json' '
+    $notarize notarize.ts  --sign did &&
+    test -f notarize.ts.aqua.json
 '
 
 # Cleanup
 test_expect_success 'Cleanup test files' '
     rm -f README.md.aqua.json &&
     rm -f LICENSE.aqua.json &&
-    rm -f notarize.js.aqua.json &&
+    rm -f notarize.ts.aqua.json &&
     rm -f README.md &&
     rm -f LICENSE &&
-    rm -f notarize.js &&
+    rm -f notarize.ts &&
     rm -f actual_output
 '
 
