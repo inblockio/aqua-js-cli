@@ -136,6 +136,7 @@ function updateForm(filename_par: string, key: string, content: string | undefin
 }
 
 export async function runFormUpdater(argv: minimist.ParsedArgs): Promise<void> {
+ 
   if (argv._.length < 1 || (!argv.delete && !argv.update)) {
     formatter.log_red("ERROR: You must specify a filename and either --delete or --update option");
     formUpdaterUsage();
@@ -157,12 +158,4 @@ export async function runFormUpdater(argv: minimist.ParsedArgs): Promise<void> {
     }
     updateForm(filename, argv.update, argv._[1]);
   }
-}
-
-// For standalone usage
-if (require.main === module) {
-  const argv = minimist(process.argv.slice(2), opts);
-  (async () => {
-    await runFormUpdater(argv);
-  })();
 }

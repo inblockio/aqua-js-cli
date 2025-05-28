@@ -163,6 +163,7 @@ if (args.includes("--help") || args.includes("-h")) {
 
 // Handle different commands
 async function main() {
+   
   if (mainCommand === "notarize") {
     const argv = minimist(args, notarizeOpts);
     await runNotarize(argv);
@@ -171,7 +172,7 @@ async function main() {
     await runVerify(argv);
 
   } else if (mainCommand === "form_updater") {
-    const argv = minimist(args, verifyOpts);
+    const argv = minimist(args, formUpdaterOpts);
     await runFormUpdater(argv);
 
   } else {
