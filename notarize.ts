@@ -78,7 +78,7 @@ Example :
 
   3. Witness
     -> multple aqua trees using eth option  
-      ./notarize.js LICENSE,README.md --witness eth --tree --type sepolia
+      ./notarize.js LICENSE,README.md --witness eth --tree --network sepolia
 
   4. Signing 
     -> using metemask 

@@ -1,196 +1,194 @@
-# data-accounting-external-verifier, 
-JS Client,  scripts for signing , witnessiing and verifying revisiion <br/>
+# Aqua JS CLI
 
-## Functional description
-* configure remote domain (by default use localhost as domoain) to query REST API to verify page
-* configure title name to select which page to verify
-
+JS Client scripts for signing, witnessing and verifying revisions
 
 ## Requirements
-Minimum reuirement Node.js 14.x+ <br/>
-But it is recommended to run the latest Node.js.
-install node [here](https://nodejs.org/en/download)
+Minimum requirement: Node.js 14.x+  
+But it is recommended to run the latest Node.js.  
+Install node [here](https://nodejs.org/en/download)
 
-## Getting started 
+## Getting Started 
 1. `npm install`
 2. `npm run build`
-3.  use `aqua.js in dist file` follow usage command. 
-4.  You can also build a standalon binary using `build:bin`, subsittute 
+3. Use `aqua.js` in dist file, follow usage commands in the section below
+4. You can also build a standalone binary using `build:bin`. Substitute accordingly in step 2 above; the binaries will be in the binaries folder
 
 ## Usage
-### 1. Notarizing / Signing / Witnessing a file
 
-To notarize a file use the following command
+### 1. Notarizing / Signing / Witnessing a File
 
-```bash 
-./aqua.js notarize <FILE_PATH>
-```
-
-ie 
+To notarize a file, use the following command:
 
 ```bash 
-./aqua.js notarize ./LICENSE
+./dist/aqua.js notarize <FILE_PATH>
 ```
 
+Example:
 
-To sign a file use the following command
-
-```bash
-./aqua.js notarize --sign [cli|metamask|did] <FILE_PATH>
+```bash 
+./dist/aqua.js notarize ./LICENSE
 ```
 
-ie 
+To sign a file, use the following command.  
+You can only sign aqua.json files. Ensure to notarize using the command above.
 
 ```bash
-./aqua.js  notarize  --sign cli ./LICENSE
+./dist/aqua.js notarize [--sign cli | --sign metamask | --sign did] <FILE_PATH>
 ```
 
-
-To witness a file, use the following command
+Example:
 
 ```bash
-./aqua.js  notarize  [--witness eth|--witness nostr|--witness tsa] <FILE_PATH>
+./dist/aqua.js notarize --sign cli ./LICENSE
 ```
 
-ie
+To witness a file, use the following command.  
+You can only witness aqua.json files. Ensure to notarize using the command above.
 
 ```bash
-./aqua.js  notarize ./LICENSE --witness eth
+./dist/aqua.js notarize [--witness eth | --witness nostr | --witness tsa] <FILE_PATH>
 ```
 
-To witness multiple aqua chains 
+Example:
 
-ie 
 ```bash
-./aqua.js notarize LICENSE,README.md --witness eth --vtree --type sepolia
+./dist/aqua.js notarize ./LICENSE --witness eth
 ```
 
+To witness multiple aqua chains:
 
-
-To witness multiple file with specific revision 
-ie 
+Example:
 ```bash
-./aqua.js notarize LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth  --type cli --vtree
+./dist/aqua.js notarize LICENSE,README.md --witness eth --vtree --network sepolia
 ```
 
+To witness multiple files with specific revision:
 
-### 2. Aqua chain verification
-
-To verify an aqua chain use the following command
-
+Example:
 ```bash
-./aqua.js verify <AQUA_CHAIN_FILE_PATH>
+./dist/aqua.js notarize LICENSE@0x_specific_revision_,README.md@0x_specific_revision_ --witness eth --type cli --vtree
 ```
 
-ie
+### 2. Aqua Chain Verification
+
+To verify an aqua chain, use the following command:
 
 ```bash
-./aqua.js verify LICENSE.aqua.json
+./dist/aqua.js verify <AQUA_CHAIN_FILE_PATH>
+```
+
+Example:
+
+```bash
+./dist/aqua.js verify LICENSE.aqua.json
 ```
 
 #### 2.1. Verification Options
 
-##### 2.1.1. `-v` - Outputting verbose results
+##### 2.1.1. `-v` - Outputting Verbose Results
 
-Use the `-v` for result versboseness ie
-
-```bash
-./aqua.js verify LICENSE.aqua.json -v
-```
-
-##### 2.1.2. `--ignore-merkle-proof` - Ignore verifying the witness merkle proof of each revision
-
-Use the `--ignore-merkle-proof` for ignore verifying merkle proof of each revision. Verification is faster ie
+Use the `-v` flag for result verboseness:
 
 ```bash
-./aqua.js verify LICENSE.aqua.json --ignore-merkle-proof
+./dist/aqua.js verify LICENSE.aqua.json -v
 ```
 
-### 3. Deleting a revision from Aqua Chain
+##### 2.1.2. `--ignore-merkle-proof` - Ignore Verifying the Witness Merkle Proof of Each Revision
 
-This will delete the last revision from an aqua chain
+Use the `--ignore-merkle-proof` flag to ignore verifying merkle proof of each revision. Verification is faster:
 
 ```bash
-./aqua.js notarize --remove <FILE_PATH>
+./dist/aqua.js verify LICENSE.aqua.json --ignore-merkle-proof
 ```
 
-ie
+### 3. Deleting a Revision from Aqua Chain
+
+This will delete the last revision from an aqua chain:
 
 ```bash
-./aqua.js  notarize --remove ./LICENSE
+./dist/aqua.js notarize --remove <FILE_PATH>
 ```
 
-
-### 4. Linking an Aqua chain to another
-
-To link an Aqua chain to another use the `--link` option as follows
+Example:
 
 ```bash
-./aqua.js notarize  <FILE_PATH>  --link  <FILE_PATH.aqua.json>
+./dist/aqua.js notarize --remove ./LICENSE
 ```
 
-ie
+### 4. Linking an Aqua Chain to Another
+
+To link an Aqua chain to another, use the `--link` option as follows:
 
 ```bash
-./aqua.js notarize   --link ./LICENSE ./README.md.aqua.json
+./dist/aqua.js notarize <FILE_PATH> --link <FILE_PATH.aqua.json>
 ```
 
-This will link `README.md.aqua.json` to `LICENSE` file and it will be written into `LICENSE.aqua.json` file
-
-
-### 5. Generating a content revision
-
-To generate a `content` revision you run the following command
+Example:
 
 ```bash
-./aqua.js notarize --content ./LICENSE
+./dist/aqua.js notarize --link ./LICENSE ./README.md.aqua.json
 ```
 
-### 6. Generating a Scalar revision
+This will link `README.md.aqua.json` to the `LICENSE` file and it will be written into the `LICENSE.aqua.json` file.
 
-To generate a `content` revision you run the following command
+### 5. Generating a Content Revision
 
+To generate a `content` revision, run the following command:
 
 ```bash
-./aqua.js notarize --scalar ./LICENSE
+./dist/aqua.js notarize --content ./LICENSE
 ```
 
-### 7.  Forms 
-To create a genesis form revision 
-`./notarize.js example-form.json --form example-form.json `
+### 6. Generating a Scalar Revision
 
-please note for genesis the filane name should be the same with form name
+To generate a `scalar` revision, run the following command:
 
-To create a form revision 
-`./notarize.js LICENCE --form example-form.json `
+```bash
+./dist/aqua.js notarize --scalar ./LICENSE
+```
 
-### 8. Update Aqua forms 
+### 7. Forms 
 
-* To delete a form entry  `./form_updater.js example-form.json.aqua.json@abcd --delete age`
+To create a genesis form revision:
+```bash
+./notarize.js example-form.json --form example-form.json
+```
+
+Please note: for genesis, the filename should be the same as the form name.
+
+To create a form revision:
+```bash
+./notarize.js LICENSE --form example-form.json
+```
+
+### 8. Update Aqua Forms 
+
+* To delete a form entry:
+  ```bash
+  ./form_updater.js example-form.json.aqua.json@abcd --delete age
+  ```
  
-*  to update a form entry ie undelete it `./form_updater.js example-form.json.aqua.json --update forms_age 200`
- 
+* To update a form entry (i.e., undelete it):
+  ```bash
+  ./form_updater.js example-form.json.aqua.json --update forms_age 200
+  ```
 
-1. File Validation: Ensures the input file is a .aqua.json file and exists
-2. Form Key Detection:
-Can find exact matches (e.g., forms-name)
-Can find partial matches (e.g., name will match forms-name)
-Handles deleted fields (e.g., forms-name.deleted)
-3. Operations:
---delete: Marks a form field as deleted by appending .deleted
---update: Updates or restores a form field, removing the .deleted suffix if present
-4. Error Handling: Provides clear error messages for invalid inputs
-5. Non-destructive: Preserves the original structure while making changes
+**Features:**
 
-## How to run tests
-- ensure to install shareness in you local systems the sharenss path is set to `~/share/sharness/sharness.sh` then copy the shareness directory to tests. Check out [sharness](https://github.com/felipec/sharness) for more instructions
-- run `make test`
-- the output will be  in test >  trash *(the last part is dynamic based on the test)
-- Hint : ensure your `tests/test-*.sh` file are excutable `chmod +x  tests/test-*`
+1. **File Validation**: Ensures the input file is a .aqua.json file and exists
+2. **Form Key Detection**:
+   - Can find exact matches (e.g., forms-name)
+   - Can find partial matches (e.g., name will match forms-name)
+   - Handles deleted fields (e.g., forms-name.deleted)
+3. **Operations**:
+   - `--delete`: Marks a form field as deleted by appending .deleted
+   - `--update`: Updates or restores a form field, removing the .deleted suffix if present
+4. **Error Handling**: Provides clear error messages for invalid inputs
+5. **Non-destructive**: Preserves the original structure while making changes
 
+## How to Run Tests
 
-
-
-Here’s a more polished version with a clear and structured documentation style:  
-
----
+- Ensure to install sharness in your local system. The sharness path is set to `~/share/sharness/sharness.sh`, then copy the sharness directory to tests. Check out [sharness](https://github.com/felipec/sharness) for more instructions
+- Run `make test`
+- The output will be in test > trash *(the last part is dynamic based on the test)*
+- **Hint**: Ensure your `tests/test-*.sh` files are executable: `chmod +x tests/test-*`
