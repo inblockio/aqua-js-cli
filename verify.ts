@@ -59,6 +59,6 @@ export async function run(argvData: minimist.ParsedArgs = argv) {
 
 
 // The main function
-; (async function () {
-  await run()
-})()
+// ; (async function () {
+//   await run()
+// })()

@@ -345,7 +345,8 @@ async function runNotarize(argv: minimist.ParsedArgs) {
     }
   }
 
-  console.log("➡️ Revision type: ", revisionType);
+  console.log("➡️  Revision type: ", revisionType);
+  console.log(`➡️  Credential :  ${credentialsFile}  Data ${JSON.stringify(creds,null,4)}`, );
 
   if (enableContent) {
     const fileContent = fs.readFileSync(fileNameOnly, { encoding: "utf-8" });
