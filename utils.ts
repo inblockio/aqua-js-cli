@@ -34,12 +34,16 @@ export function getFilePath() {
 }
 
 export function readCredentials(credentialsFile = "credentials.json", createWallet = true) {
-  // const __filename = fileURLToPath(import.meta.url);
-  // const __dirname = dirname(__filename);
-
   const { __filename, __dirname } = getFilePath();
 
-  let filePath = `${__dirname}/${credentialsFile}`;
+  let filePath = "";
+  if(credentialsFile.startsWith("/")) {
+    filePath = credentialsFile;
+  } else if(credentialsFile.startsWith("./")) {
+    filePath = `${__dirname}/${credentialsFile.substring(2)}`;
+  } else {
+    filePath = `${__dirname}/${credentialsFile}`;
+  }
 
   if (existsSync(filePath)) {
     return JSON.parse(readFileSync(filePath, "utf8"));
