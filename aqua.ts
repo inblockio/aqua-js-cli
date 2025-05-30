@@ -546,6 +546,7 @@ async function runNotarize(argv: minimist.ParsedArgs) {
 async function runVerify(argv :  any) {
   const verbose = argv.v;
   const server = argv.server ? argv.server : "http://localhost:9352";
+  const credentialsFile = argv["cred"] || "credentials.json";
   
   if (argv._.length < 1 && !argv.api) {
     formatter.log_red("ERROR: You must specify the file name or page title (if --api)");
@@ -559,16 +560,16 @@ async function runVerify(argv :  any) {
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
-
-    await verifyAndGetGraphData(filename, verbose);
+    const credentials = readCredentials(credentialsFile);
+    await verifyAndGetGraphData(filename, verbose, credentials);
     console.log();
   } else {
     let filename = argv._[0];
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
-
-    await verifyAquaTreeData(filename, verbose);
+     const credentials = readCredentials(credentialsFile);
+    await verifyAquaTreeData(filename, verbose, credentials);
     console.log();
   }
 }

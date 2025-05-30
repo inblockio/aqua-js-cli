@@ -15,11 +15,11 @@ import * as witnessEth from "./witness_eth.js"
 import * as witnessTsa from "./witness_tsa.js"
 import * as did from "./did.js"
 import crypto from "crypto"
-import Aquafier, { printLogs, AquaTree, FileObject, LogType, printGraphData } from "aqua-js-sdk"
+import Aquafier, { printLogs, AquaTree, FileObject, LogType, printGraphData, CredentialsData } from "aqua-js-sdk"
 import { readExportFile } from "./utils.js"
 import * as path from 'path';
 
-export async function verifyAquaTreeData(fileName: string, verboseOption: boolean = false) {
+export async function verifyAquaTreeData(fileName: string, verboseOption: boolean = false, credentials: CredentialsData) {
   console.log(`file name ${fileName}`);
   const aquafier = new Aquafier();
   const filenameToRead = fileName.endsWith(".aqua.json") ? fileName : fileName + ".aqua.json";
@@ -36,7 +36,7 @@ export async function verifyAquaTreeData(fileName: string, verboseOption: boolea
   let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray, basePath);
 
   // console.log(`all fileObjectsArraySecondary ${JSON.stringify(fileObjectsArraySecondary, null, 4)}`)
-  let result = await aquafier.verifyAquaTree(aquaTree, fileObjectsArraySecondary);
+  let result = await aquafier.verifyAquaTree(aquaTree, fileObjectsArraySecondary, credentials);
 
   if (result!.isOk()) {
     result.data.logData.push({
@@ -197,7 +197,7 @@ async function readAllNecessaryFiles(
 // }
 
 
-export async function verifyAndGetGraphData(fileName: string, verboseOption: boolean = false) {
+export async function verifyAndGetGraphData(fileName: string, verboseOption: boolean = false, credentials: CredentialsData) {
   const aquafier = new Aquafier();
   const filenameToRead = fileName.endsWith(".aqua.json") ? fileName : fileName + ".aqua.json"
   // console.log(`-> reading file  ${fileName}`)
@@ -221,7 +221,7 @@ export async function verifyAndGetGraphData(fileName: string, verboseOption: boo
   let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray)
   // fileObjectsArray.push(...fileObjectsArraySecondary)
 
-  let result = await aquafier.verifyAndGetGraphData(aquaTree, fileObjectsArray);
+  let result = await aquafier.verifyAndGetGraphData(aquaTree, fileObjectsArray, credentials);
 
   // console.log("Graph Data \nsign" + JSON.stringify(result, null, 4) + "\n")
   if (result!.isOk()) {
