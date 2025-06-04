@@ -63,10 +63,10 @@ async function readAllNecessaryFiles(
   for (let item of filesToBeRead) {
     // First, check if the item already contains the basePath
     const containsBasePath = item.includes(basePath) && basePath !== "";
-    
+
     // Construct the full path correctly
     const fullPath = containsBasePath ? item : path.join(basePath, item);
-    
+
     // Get just the filename without path
     const itemBaseName = path.basename(item);
 
@@ -74,7 +74,7 @@ async function readAllNecessaryFiles(
       // File has already been processed
       continue;
     }
-    
+
     // Determine the aqua file path
     let aquaFile = "";
     if (item.endsWith(".aqua.json")) {
@@ -85,8 +85,8 @@ async function readAllNecessaryFiles(
 
     // Process the raw file
     const pureFileNameItem = itemBaseName.replace(".aqua.json", "");
-    const pureFilePath = containsBasePath ? 
-      item.replace(".aqua.json", "") : 
+    const pureFilePath = containsBasePath ?
+      item.replace(".aqua.json", "") :
       path.join(basePath, pureFileNameItem);
 
     console.log(`-> reading pure file ${pureFilePath}`);
@@ -148,7 +148,7 @@ async function readAllNecessaryFiles(
 //       if (item.endsWith(".aqua.json")) {
 //         aquaFile = fullPath
 //       } else {
-        
+
 //         aquaFile= fullPath + ".aqua.json"
 //       }
 
@@ -204,7 +204,7 @@ export async function verifyAndGetGraphData(fileName: string, verboseOption: boo
   const aquaTree = await readExportFile(fileName)
 
   let fileObjectsArray = []
-
+  const basePath = path.dirname(fileName);
   // the file that has been aquafied
 
   let pureFileName = fileName.replace(".aqua.json", "")
@@ -212,25 +212,20 @@ export async function verifyAndGetGraphData(fileName: string, verboseOption: boo
   fileObjectsArray.push({
     fileName: pureFileName,
     fileContent: fileContents,
-    path: ""
+    path: basePath
   });
 
   let filesToBeRead = aquafier.fetchFilesToBeRead(aquaTree)
 
 
-  let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray)
+  let fileObjectsArraySecondary = await readAllNecessaryFiles(filesToBeRead, aquafier, fileObjectsArray, basePath)
   // fileObjectsArray.push(...fileObjectsArraySecondary)
 
   let result = await aquafier.verifyAndGetGraphData(aquaTree, fileObjectsArray, credentials);
-
-  // console.log("Graph Data \nsign" + JSON.stringify(result, null, 4) + "\n")
+  
   if (result!.isOk()) {
     printGraphData(result.data, "", verboseOption)
   } else {
-    result.data.push({
-      log: "AquaTree verification failed",
-      logType: LogType.FINAL_ERROR
-    })
     printLogs(result.data, verboseOption)
   }
 

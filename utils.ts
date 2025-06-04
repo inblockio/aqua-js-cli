@@ -1,5 +1,5 @@
 import { Mnemonic } from "ethers";
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 // import path, { dirname } from "path";
 import crypto from "crypto";
 import * as fs from "fs";
@@ -16,6 +16,8 @@ import * as formatter from "./formatter.js";
 
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { dirname } from "path";
+import { homedir } from "os";
 
 export function getFilePath() {
   try {
@@ -26,56 +28,129 @@ export function getFilePath() {
     return { __filename, __dirname };
   } catch (e) {
     // Fallback for CommonJS
-    return { 
-      __filename: '', 
-      __dirname: process.cwd() 
+    return {
+      __filename: '',
+      __dirname: process.cwd()
     };
   }
 }
 
-export function readCredentials(credentialsFile = "credentials.json", createWallet = true) {
+// export function readCredentials(_credentialsFile = "~/.aqua/credentials.json", createWallet = true) {
+//   let credentialsFile = "~/.aqua/credentials.json" //_credentialsFile;
+//   const { __filename, __dirname } = getFilePath();
+
+//   let filePath = "";
+//   if (credentialsFile.startsWith("/")) {
+//     filePath = credentialsFile;
+//   } else if (credentialsFile.startsWith("./")) {
+//     filePath = `${__dirname}/${credentialsFile.substring(2)}`;
+//   } else if (credentialsFile.startsWith("~")) {
+//     filePath = credentialsFile;
+//   } else {
+//     filePath = `${__dirname}/${credentialsFile}`;
+//   }
+
+//   if (existsSync(filePath)) {
+//     return JSON.parse(readFileSync(filePath, "utf8"));
+//   } else {
+//     if (createWallet) {
+//       // Generate random entropy (128 bits for a 12-word mnemonic)
+//       // const entropy = crypto.randomBytes(16);
+
+//       // Convert entropy to a mnemonic phrase
+//       // const mnemonic = Mnemonic.fromEntropy(entropy);
+
+//       let credentialsObject = {
+//         // mnemonic: mnemonic.phrase,
+//         mnemonic: "mail ignore situate guard glove physical gaze scale they trouble chunk sock",
+//         nostr_sk: "bab92dda770b41ffb8afa623198344f44950b5b9c3e83f6b36ad08977b783d55",
+//         did_key: "2edfed1830e9db59438c65b63a85c73a1aea467e8a84270d242025632e04bb65",
+//         alchemy_key: "ZaQtnup49WhU7fxrujVpkFdRz4JaFRtZ",
+//         witness_eth_network: "sepolia",
+//         witness_meth: "metamask",
+//       };
+//       try {
+//         const dir = dirname(filePath);
+//         if (!existsSync(dir)) {
+//           mkdirSync(dir, { recursive: true });
+//         }
+//         writeFileSync(
+//           filePath,
+//           JSON.stringify(credentialsObject, null, 4),
+//           "utf8",
+//         );
+//         return credentialsObject;
+//       } catch (error) {
+//         console.error("Failed to write mnemonic:", error);
+//         process.exit(1);
+//       }
+//     } else {
+//       console.error("An error occured");
+//       process.exit(1);
+//     }
+//   }
+// }
+
+export function readCredentials(_credentialsFile = "~/.aqua/credentials.json", createWallet = true, verboseOption: boolean = false) {
+
+  let credentialsFile = _credentialsFile;
   const { __filename, __dirname } = getFilePath();
 
   let filePath = "";
-  if(credentialsFile.startsWith("/")) {
+  if (credentialsFile.startsWith("/")) {
     filePath = credentialsFile;
-  } else if(credentialsFile.startsWith("./")) {
+  } else if (credentialsFile.startsWith("./")) {
     filePath = `${__dirname}/${credentialsFile.substring(2)}`;
+  } else if (credentialsFile.startsWith("~")) {
+    // Properly expand ~ to home directory
+    filePath = credentialsFile.replace("~", homedir());
   } else {
     filePath = `${__dirname}/${credentialsFile}`;
   }
 
+  const aquaDir = dirname(filePath);
+
   if (existsSync(filePath)) {
-    return JSON.parse(readFileSync(filePath, "utf8"));
+    const creds = JSON.parse(readFileSync(filePath, "utf8"));
+    // if (verboseOption) {
+    //   console.log("Credentials read: ", creds);
+    // }
+    return creds;
   } else {
     if (createWallet) {
-      // Generate random entropy (128 bits for a 12-word mnemonic)
-      const entropy = crypto.randomBytes(16);
+      // Ensure the .aqua directory exists
+      
+      if (!existsSync(aquaDir)) {
+        mkdirSync(aquaDir, { recursive: true });
+      }
 
-      // Convert entropy to a mnemonic phrase
-      const mnemonic = Mnemonic.fromEntropy(entropy);
-
-      let credentialsObject = {
-        mnemonic: mnemonic.phrase,
-        nostr_sk: "",
-        did_key: "",
+      const credentialsObject = {
+        mnemonic: "mail ignore situate guard glove physical gaze scale they trouble chunk sock",
+        nostr_sk: "bab92dda770b41ffb8afa623198344f44950b5b9c3e83f6b36ad08977b783d55",
+        did_key: "2edfed1830e9db59438c65b63a85c73a1aea467e8a84270d242025632e04bb65",
         alchemy_key: "ZaQtnup49WhU7fxrujVpkFdRz4JaFRtZ",
         witness_eth_network: "sepolia",
         witness_meth: "metamask",
       };
+
+      // if (verboseOption) {
+      //   console.log("Creating credentials file: ", filePath);
+      //   console.log("Credentials used: ", credentialsObject);
+      // }
+
       try {
         writeFileSync(
           filePath,
           JSON.stringify(credentialsObject, null, 4),
-          "utf8",
+          "utf8"
         );
         return credentialsObject;
       } catch (error) {
-        console.error("Failed to write mnemonic:", error);
+        console.error("Failed to write credentials file:", error);
         process.exit(1);
       }
     } else {
-      console.error("An error occured");
+      console.error("Credentials file not found and createWallet is false");
       process.exit(1);
     }
   }
@@ -123,8 +198,8 @@ export const createGenesisRevision = async (
     process.exit(1);
   }
 
-  const fileName =aquaFilename.replace(".aqua.json", "")
-  const fileContent =  readFileContent(fileName)
+  const fileName = aquaFilename.replace(".aqua.json", "")
+  const fileContent = readFileContent(fileName)
 
   let fileObject = {
     fileName: aquaFilename.replace(".aqua.json", ""),
@@ -444,7 +519,7 @@ export const revisionWithMultipleAquaChain = async (
 
 export async function readExportFile(
   filename: string,
-): Promise<string | AquaTree  | Uint8Array> {
+): Promise<string | AquaTree | Uint8Array> {
   if (!fs.existsSync(filename)) {
     formatter.log_red(`ERROR: The file ${filename} does not exist.`);
     process.exit(1);
@@ -477,7 +552,7 @@ export async function readExportFile(
 function isTextFile(filePath: string) {
   // Get the file extension
   const ext = path.extname(filePath).toLowerCase();
-  
+
   // Common text file extensions
   const textExtensions = [
     // Programming languages

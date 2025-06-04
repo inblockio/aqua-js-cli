@@ -216,7 +216,7 @@ async function runNotarize(argv: minimist.ParsedArgs) {
   let network = argv["network"];
   let witness_platform_type = argv["type"];
   let showGraph = argv["graph"];
-  const credentialsFile = argv["cred"] || "credentials.json";
+  const credentialsFile = argv["cred"] || "~/.aqua/credentials.json";
 
   let fileNameOnly = "";
   let revisionHashSpecified = "";
@@ -335,7 +335,7 @@ async function runNotarize(argv: minimist.ParsedArgs) {
     process.exit(1);
   }
 
-  const creds = readCredentials(credentialsFile);
+  const creds = readCredentials(credentialsFile, true, enableVerbose);
   const aquaTreeWrapper = readAndCreateAquaTreeAndAquaTreeWrapper(fileNameOnly, revisionHashSpecified);
   if (revisionType == "file") {
     let alreadyNotarized = aquafier.checkIfFileAlreadyNotarized(aquaTreeWrapper.aquaTree, aquaTreeWrapper.aquaTreeWrapper.fileObject);
@@ -345,8 +345,8 @@ async function runNotarize(argv: minimist.ParsedArgs) {
     }
   }
 
-  console.log("➡️  Revision type: ", revisionType);
-  console.log(`➡️  Credential :  ${credentialsFile}  Data ${JSON.stringify(creds,null,4)}`, );
+  // console.log("➡️  Revision type: ", revisionType);
+  // console.log(`➡️  Credential :  ${credentialsFile}  Data ${JSON.stringify(creds,null,4)}`, );
 
   if (enableContent) {
     const fileContent = fs.readFileSync(fileNameOnly, { encoding: "utf-8" });
@@ -546,7 +546,7 @@ async function runNotarize(argv: minimist.ParsedArgs) {
 async function runVerify(argv :  any) {
   const verbose = argv.v;
   const server = argv.server ? argv.server : "http://localhost:9352";
-  const credentialsFile = argv["cred"] || "credentials.json";
+  const credentialsFile = argv["cred"] || "~/.aqua/credentials.json";
   
   if (argv._.length < 1 && !argv.api) {
     formatter.log_red("ERROR: You must specify the file name or page title (if --api)");
@@ -560,7 +560,7 @@ async function runVerify(argv :  any) {
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
-    const credentials = readCredentials(credentialsFile);
+    const credentials = readCredentials(credentialsFile, true, verbose);
     await verifyAndGetGraphData(filename, verbose, credentials);
     console.log();
   } else {
@@ -568,7 +568,7 @@ async function runVerify(argv :  any) {
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
-     const credentials = readCredentials(credentialsFile);
+     const credentials = readCredentials(credentialsFile, true, verbose);
     await verifyAquaTreeData(filename, verbose, credentials);
     console.log();
   }
