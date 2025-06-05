@@ -15,6 +15,18 @@ Install node [here](https://nodejs.org/en/download)
 
 ## Usage
 
+### Credentials
+
+By default, aqua.js will look for a credentials file at `~/.aqua/credentials.json`. If it doesn't exist, it will create one with the default values.
+
+So you can run `./dist/aqua.js notarize README.md` without any arguments.
+
+If you want to create a custom credentials file, you can use the `--cred` option:
+
+```bash
+./dist/aqua.js notarize README.md --cred ./NEW/PATH/TO/credentials.json
+```
+
 ### 1. Notarizing / Signing / Witnessing a File
 
 To notarize a file, use the following command:

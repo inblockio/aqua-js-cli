@@ -44,9 +44,6 @@ export async function run(argvData: minimist.ParsedArgs = argv) {
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json"
 
-     
-
-
     await main.verifyAndGetGraphData(filename, verbose, credentials);
     // await main.verifyPage(offlineData, verbose)
     console.log()
