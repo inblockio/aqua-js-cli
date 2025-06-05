@@ -3,6 +3,7 @@
 import * as main from "./index.js"
 import minimist from "minimist"
 import * as formatter from "./formatter.js"
+import { readCredentials } from "./utils.js"
 
 const opts = {
   // This is required so that -v and -m are position independent.
@@ -34,6 +35,8 @@ const verbose = argv.v
 
 
 export async function run(argvData: minimist.ParsedArgs = argv) {
+   const credentialsFile = argv["cred"] || "~/.aqua/credentials.json";
+        const credentials = readCredentials(credentialsFile, true, verbose);
   if (argvData.graph) {
     console.log("The graph")
     let filename = argvData._[0]
@@ -41,7 +44,10 @@ export async function run(argvData: minimist.ParsedArgs = argv) {
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json"
 
-    await main.verifyAndGetGraphData(filename, verbose);
+     
+
+
+    await main.verifyAndGetGraphData(filename, verbose, credentials);
     // await main.verifyPage(offlineData, verbose)
     console.log()
   }
@@ -51,7 +57,7 @@ export async function run(argvData: minimist.ParsedArgs = argv) {
     // file corresponding with the file
     filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json"
 
-    await main.verifyAquaTreeData(filename, verbose);
+    await main.verifyAquaTreeData(filename, verbose, credentials);
     // await main.verifyPage(offlineData, verbose)
     console.log()
   }
