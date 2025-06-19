@@ -524,7 +524,7 @@ export async function readExportFile(
     formatter.log_red(`ERROR: The file ${filename} does not exist.`);
     process.exit(1);
   }
-  if (!filename.endsWith("aqua.json")) {
+  if (!filename.endsWith(".aqua.json")) {
     //   formatter.log_red("The file must have a .json extension")
     //   process.exit(1)
     // const fileContent = fs.readFileSync(filename, "binary")
@@ -534,6 +534,7 @@ export async function readExportFile(
   }
   const fileContent = fs.readFileSync(filename, "utf-8");
   const offlineData = JSON.parse(fileContent);
+ 
   if (!("revisions" in offlineData)) {
     formatter.log_red("The json file doesn't contain 'revisions' key.");
     process.exit(1);
