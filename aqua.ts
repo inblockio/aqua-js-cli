@@ -438,16 +438,14 @@ async function runNotarize(argv: minimist.ParsedArgs) {
         witness_platform_type = "eth";
       }
     }
-    
     if (network == undefined) {
       network = creds.witness_eth_network;
       if (creds.witness_eth_network == undefined || creds.witness_eth_network.length == 0) {
         network = "sepolia";
       }
-    }
-
+    } 
     const witnessResult = await aquafier.witnessAquaTree(aquaTreeWrapper.aquaTreeWrapper, witnessMethod, network, witness_platform_type, creds, enableScalar);
-
+   
     if (witnessResult.isOk()) {
       serializeAquaTree(aquaFilename, witnessResult.data.aquaTree!);
       let logs_result = witnessResult.data.logData;
