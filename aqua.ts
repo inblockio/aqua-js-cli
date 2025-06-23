@@ -11,7 +11,8 @@ import {
   createGenesisRevision,
   serializeAquaTree,
   readAndCreateAquaTreeAndAquaTreeWrapper,
-  revisionWithMultipleAquaChain
+  revisionWithMultipleAquaChain,
+  credentialsPath
 } from "./utils.js";
 import { verifyAndGetGraphData, verifyAquaTreeData } from "./index.js";
 import { runFormUpdater, formUpdaterUsage } from "./form_updater.js";
@@ -216,7 +217,7 @@ async function runNotarize(argv: minimist.ParsedArgs) {
   let network = argv["network"];
   let witness_platform_type = argv["type"];
   let showGraph = argv["graph"];
-  const credentialsFile = argv["cred"] || "~/.aqua/credentials.json";
+  const credentialsFile = argv["cred"] || credentialsPath() //"~/.aqua/credentials.json";
 
   let fileNameOnly = "";
   let revisionHashSpecified = "";

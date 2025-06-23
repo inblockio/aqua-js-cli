@@ -6,6 +6,7 @@ import * as fs from "fs";
 import Aquafier, {
   AquaTree,
   LogType,
+  OrderRevisionInAquaTree,
   printLogs,
   Revision,
   SignType,
@@ -18,6 +19,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from "path";
 import { homedir } from "os";
+import { defaultTemplates, SystemTemplates, TemplateState } from "./types.js";
 
 export function getFilePath() {
   try {
@@ -35,61 +37,245 @@ export function getFilePath() {
   }
 }
 
-// export function readCredentials(_credentialsFile = "~/.aqua/credentials.json", createWallet = true) {
-//   let credentialsFile = "~/.aqua/credentials.json" //_credentialsFile;
-//   const { __filename, __dirname } = getFilePath();
+export function systemtemplatesPath() {
+  return path.join(userHomedir(), ".aqua", "system_templates.json");
+}
+export function credentialsPath() {
+  return path.join(userHomedir(), ".aqua", "credentials.json");
+}
+export function userHomedir() {
+  // Use Node.js built-in homedir function
+  return require('os').homedir();
+}
 
-//   let filePath = "";
-//   if (credentialsFile.startsWith("/")) {
-//     filePath = credentialsFile;
-//   } else if (credentialsFile.startsWith("./")) {
-//     filePath = `${__dirname}/${credentialsFile.substring(2)}`;
-//   } else if (credentialsFile.startsWith("~")) {
-//     filePath = credentialsFile;
-//   } else {
-//     filePath = `${__dirname}/${credentialsFile}`;
-//   }
 
-//   if (existsSync(filePath)) {
-//     return JSON.parse(readFileSync(filePath, "utf8"));
-//   } else {
-//     if (createWallet) {
-//       // Generate random entropy (128 bits for a 12-word mnemonic)
-//       // const entropy = crypto.randomBytes(16);
 
-//       // Convert entropy to a mnemonic phrase
-//       // const mnemonic = Mnemonic.fromEntropy(entropy);
 
-//       let credentialsObject = {
-//         // mnemonic: mnemonic.phrase,
-//         mnemonic: "mail ignore situate guard glove physical gaze scale they trouble chunk sock",
-//         nostr_sk: "bab92dda770b41ffb8afa623198344f44950b5b9c3e83f6b36ad08977b783d55",
-//         did_key: "2edfed1830e9db59438c65b63a85c73a1aea467e8a84270d242025632e04bb65",
-//         alchemy_key: "ZaQtnup49WhU7fxrujVpkFdRz4JaFRtZ",
-//         witness_eth_network: "sepolia",
-//         witness_meth: "metamask",
-//       };
-//       try {
-//         const dir = dirname(filePath);
-//         if (!existsSync(dir)) {
-//           mkdirSync(dir, { recursive: true });
-//         }
-//         writeFileSync(
-//           filePath,
-//           JSON.stringify(credentialsObject, null, 4),
-//           "utf8",
-//         );
-//         return credentialsObject;
-//       } catch (error) {
-//         console.error("Failed to write mnemonic:", error);
-//         process.exit(1);
-//       }
-//     } else {
-//       console.error("An error occured");
-//       process.exit(1);
-//     }
-//   }
-// }
+// Load local state from file
+function loadLocalState(): TemplateState | null {
+  try {
+    const statePath = systemtemplatesPath();
+    if (fs.existsSync(statePath)) {
+      const data = fs.readFileSync(statePath, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Error loading local template state:', error);
+  }
+  return null;
+}
+
+// Save state to file
+function saveLocalState(state: TemplateState): void {
+  try {
+    const statePath = systemtemplatesPath();
+    fs.writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf8');
+    console.log('Template state saved to:', statePath);
+  } catch (error) {
+    console.error('Error saving template state:', error);
+  }
+}
+
+// Check if user is online
+function isOnline(): Promise<boolean> {
+  const dns = require('dns');
+  return new Promise((resolve) => {
+    dns.lookup('google.com', (err: any) => {
+      resolve(!err);
+    });
+  });
+}
+
+
+
+export const isWorkFlowData = (aquaTree: AquaTree, systemAndUserWorkFlow: string[]): { isWorkFlow: boolean; workFlow: string } => {
+    let falseResponse = {
+        isWorkFlow: false,
+        workFlow: ""
+    }
+    // console.log("System workflows: ", systemAndUserWorkFlow)
+
+    //order revision in aqua tree 
+    let aquaTreeRevisionsOrderd = OrderRevisionInAquaTree(aquaTree)
+    let allHashes = Object.keys(aquaTreeRevisionsOrderd.revisions)
+    if (allHashes.length <= 1) {
+        // console.log(`Aqua tree has one revision`)
+        return falseResponse
+    }
+    let secondRevision = aquaTreeRevisionsOrderd.revisions[allHashes[1]]
+    if (!secondRevision) {
+        // console.log(`Aqua tree has second revision not found`)
+        return falseResponse
+    }
+    if (secondRevision.revision_type == 'link') {
+
+        //get the  system aqua tree name 
+        let secondRevision = aquaTreeRevisionsOrderd.revisions[allHashes[1]]
+        // console.log(` second hash used ${allHashes[1]}  second revision ${JSON.stringify(secondRevision, null, 4)} tree ${JSON.stringify(aquaTreeRevisionsOrderd, null, 4)}`)
+
+        if (secondRevision.link_verification_hashes == undefined) {
+            // console.log(`link verification hash is undefined`)
+            return falseResponse
+        }
+        let revisionHash = secondRevision.link_verification_hashes[0]
+        let name = aquaTreeRevisionsOrderd.file_index[revisionHash]
+        // console.log(`--  name ${name}  all hashes ${revisionHash}  second revision ${JSON.stringify(secondRevision, null, 4)} tree ${JSON.stringify(aquaTreeRevisionsOrderd, null, 4)}`)
+
+        // if (systemAndUserWorkFlow.map((e)=>e.replace(".json", "")).includes(name)) {
+
+        let nameWithoutJson = "--error--";
+        if (name) {
+            nameWithoutJson = name.replace(".json", "")
+            if (systemAndUserWorkFlow.map((e) => e.replace(".json", "")).includes(nameWithoutJson)) {
+                return {
+                    isWorkFlow: true,
+                    workFlow: nameWithoutJson
+                }
+            }
+        }
+        return {
+            isWorkFlow: false,
+            workFlow: ""
+        }
+
+
+    }
+    // console.log(`Aqua tree has second revision is of type ${secondRevision.revision_type}`)
+
+
+    return falseResponse
+}
+
+
+/**
+ * Fetches system templates from the server or local storage.
+ * If offline, it uses default templates or previously saved templates.
+ * @returns {Promise<SystemTemplates>} - A promise that resolves to the system templates.
+ */
+
+export async function fetchSystemTemplates(): Promise<  SystemTemplates> {
+
+  // Check if online
+  const online = await isOnline();
+
+  if (!online) {
+    console.error("No internet connection detected. Using default templates.");
+    let d = loadLocalState() ;
+    if (!d) {
+      d = { templates: defaultTemplates, lastUpdated: Date.now() };
+      saveLocalState(d);
+      
+    }
+    return d.templates ;
+  }
+
+  // Load local state
+  const localState = loadLocalState();
+  const currentTemplates = localState || {};
+
+  // Fetch templates from server
+  return new Promise<SystemTemplates>((resolve) => {
+    checkOnlineFetchSystemTemplates()
+      .then((templates: SystemTemplates | PromiseLike<SystemTemplates>) => {
+        resolve(templates);
+      })
+      .catch((error) => {
+        console.error("Error fetching templates:", error);
+        resolve({ ...defaultTemplates, ...currentTemplates });
+      });
+  });
+}
+export async function checkOnlineFetchSystemTemplates(): Promise<SystemTemplates> {
+  
+  // Load existing local state
+  let localState = loadLocalState();
+  let currentTemplates = localState?.templates || {};
+  
+  console.log('Current local templates:', Object.keys(currentTemplates).length);
+
+  // Check if online
+  const online = await isOnline();
+  if (!online) {
+    console.log('No internet connection. Using local/default templates.');
+    return { ...defaultTemplates, ...currentTemplates };
+  }
+
+  return new Promise((resolve) => {
+    const https = require('https');
+    
+    const req = https.get('https://dev-api.inblock.io/system/templates', (res: any) => {
+      let data = '';
+      
+      res.on('data', (chunk: any) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          if (res.statusCode === 200) {
+            const response = JSON.parse(data);
+            const serverTemplates: SystemTemplates = response.data || {};
+            
+            console.log('Received templates from server:', Object.keys(serverTemplates).length);
+            
+            // Check for new templates and merge
+            let hasNewTemplates = false;
+            const mergedTemplates = { ...currentTemplates };
+            
+            for (const [templateName, hash] of Object.entries(serverTemplates)) {
+              if (!mergedTemplates[templateName] || mergedTemplates[templateName] !== hash) {
+                console.log(`New/Updated template found: ${templateName} = ${hash}`);
+                mergedTemplates[templateName] = hash;
+                hasNewTemplates = true;
+              }
+            }
+            
+            // Add default templates if they don't exist
+            for (const [templateName, hash] of Object.entries(defaultTemplates)) {
+              if (!mergedTemplates[templateName]) {
+                console.log(`Adding default template: ${templateName} = ${hash}`);
+                mergedTemplates[templateName] = hash;
+                hasNewTemplates = true;
+              }
+            }
+            
+            // Save to file if there are changes
+            if (hasNewTemplates || !localState) {
+              const newState: TemplateState = {
+                templates: mergedTemplates,
+                lastUpdated: Date.now()
+              };
+              saveLocalState(newState);
+              console.log('Templates updated and saved to local storage.');
+            } else {
+              console.log('No new templates found. Using existing local templates.');
+            }
+            
+            resolve(mergedTemplates);
+          } else {
+            console.error(`Server responded with status ${res.statusCode}. Using local/default templates.`);
+            resolve({ ...defaultTemplates, ...currentTemplates });
+          }
+        } catch (error) {
+          console.error("Error parsing response data. Using local/default templates.", error);
+          resolve({ ...defaultTemplates, ...currentTemplates });
+        }
+      });
+    });
+    
+    req.on('error', (error: any) => {
+      console.error("Request failed:", error.message, "Using local/default templates.");
+      resolve({ ...defaultTemplates, ...currentTemplates });
+    });
+    
+    req.setTimeout(5000, () => {
+      req.destroy();
+      console.error("Request timed out. Using local/default templates.");
+      resolve({ ...defaultTemplates, ...currentTemplates });
+    });
+  });
+}
+
 
 export function readCredentials(_credentialsFile = "~/.aqua/credentials.json", createWallet = true, verboseOption: boolean = false) {
 
@@ -119,7 +305,7 @@ export function readCredentials(_credentialsFile = "~/.aqua/credentials.json", c
   } else {
     if (createWallet) {
       // Ensure the .aqua directory exists
-      
+
       if (!existsSync(aquaDir)) {
         mkdirSync(aquaDir, { recursive: true });
       }
@@ -534,7 +720,7 @@ export async function readExportFile(
   }
   const fileContent = fs.readFileSync(filename, "utf-8");
   const offlineData = JSON.parse(fileContent);
- 
+
   if (!("revisions" in offlineData)) {
     formatter.log_red("The json file doesn't contain 'revisions' key.");
     process.exit(1);

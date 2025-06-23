@@ -14,7 +14,8 @@ import {
   createGenesisRevision,
   serializeAquaTree,
   readAndCreateAquaTreeAndAquaTreeWrapper,
-  revisionWithMultipleAquaChain
+  revisionWithMultipleAquaChain,
+  credentialsPath
 } from "./utils.js"
 
 
@@ -124,7 +125,7 @@ const enableForm = argv["form"];
 let network = argv["network"];
 let witness_platform_type = argv["type"];
 let showGraph = argv["graph"];
-const credentialsFile = argv["cred"] || "credentials.json";
+const credentialsFile = argv["cred"] ||  credentialsPath(); //"credentials.json";
 
 
 
