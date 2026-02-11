@@ -15,6 +15,7 @@ import {
   credentialsPath
 } from "./utils.js";
 import { verifyAndGetGraphData, verifyAquaTreeData } from "./index.js";
+import { verifyPdfAquaTreeData, verifyPdfAndGetGraphData } from "./verify_pdf.js";
 import { runFormUpdater, formUpdaterUsage } from "./form_updater.js";
 
 // Parse the command and subcommand structure
@@ -145,6 +146,8 @@ If the --server is not specified, it defaults to http://localhost:9352
 Examples:
   ./dist/aqua.js   verify README.md
   ./dist/aqua.js   verify README.md --graph
+  ./dist/aqua.js   verify document.pdf
+  ./dist/aqua.js   verify document.pdf --graph -v
   ./dist/aqua.js   verify --api "My Document" --server https://example.com`);
 }
 
@@ -553,22 +556,40 @@ async function runVerify(argv :  any) {
     process.exit(1);
   }
 
+  const filename = argv._[0];
+
+  // Handle PDF files
+  if (filename && filename.toLowerCase().endsWith('.pdf')) {
+    if (!fs.existsSync(filename)) {
+      formatter.log_red(`ERROR: File not found: ${filename}`);
+      process.exit(1);
+    }
+    const credentials = readCredentials(credentialsFile, true, verbose);
+    if (argv.graph) {
+      await verifyPdfAndGetGraphData(filename, verbose, credentials);
+    } else {
+      await verifyPdfAquaTreeData(filename, verbose, credentials);
+    }
+    console.log();
+    return;
+  }
+
   if (argv.graph) {
     console.log("The graph");
-    let filename = argv._[0];
+    let aquaFilename = filename;
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
-    filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
+    aquaFilename = aquaFilename.endsWith(".aqua.json") ? aquaFilename : aquaFilename + ".aqua.json";
     const credentials = readCredentials(credentialsFile, true, verbose);
-    await verifyAndGetGraphData(filename, verbose, credentials);
+    await verifyAndGetGraphData(aquaFilename, verbose, credentials);
     console.log();
   } else {
-    let filename = argv._[0];
+    let aquaFilename = filename;
     // If the file is an AQUA file, we read it directly, otherwise, we read the AQUA
     // file corresponding with the file
-    filename = filename.endsWith(".aqua.json") ? filename : filename + ".aqua.json";
+    aquaFilename = aquaFilename.endsWith(".aqua.json") ? aquaFilename : aquaFilename + ".aqua.json";
      const credentials = readCredentials(credentialsFile, true, verbose);
-    await verifyAquaTreeData(filename, verbose, credentials);
+    await verifyAquaTreeData(aquaFilename, verbose, credentials);
     console.log();
   }
 }
