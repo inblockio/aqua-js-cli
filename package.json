@@ -55,7 +55,7 @@
     "@types/pako": "^2.0.4",
     "pkg": "^5.8.1",
     "prettier": "^3.3.3",
-    "typescript": "5.8.3"
+    "typescript": "5.9.3"
   },
   "optionalDependencies": {
     "asn1js": "^3.0.5",
