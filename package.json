@@ -61,7 +61,7 @@
     "asn1js": "^3.0.5",
     "nostr-tools": "^2.7.2",
     "open": "^10.1.0",
-    "openid-client": "^5.7.0",
+    "openid-client": "^6.0.0",
     "pkijs": "^3.2.4",
     "sigstore": "^3.0.0"
   },
