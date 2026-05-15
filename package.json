@@ -22,7 +22,7 @@
     "build": "tsup",
     "local": "npm link aqua-js-sdk && tsup",
     "prepare": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "build:bin": "npm run build && pkg .",
     "build:bin:all": "npm run build && pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
   },
@@ -50,12 +50,16 @@
     "url": "https://github.com/inblockio/data-accounting-external-verifier/issues"
   },
   "homepage": "https://github.com/inblockio/data-accounting-external-verifier#readme",
+  "overrides": {
+    "ws": "^8.17.1"
+  },
   "devDependencies": {
     "@types/minimist": "^1.2.5",
     "@types/pako": "^2.0.4",
-    "pkg": "^5.8.1",
+    "@yao-pkg/pkg": "^6.19.0",
     "prettier": "^3.3.3",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "^4.1.6"
   },
   "optionalDependencies": {
     "asn1js": "^3.0.5",
