@@ -1,0 +1,142 @@
+{
+  "revision_type": "template",
+  "nonce": "0xe3a7f2b1c5d84906a1b3e7f9d2c4a6b8",
+  "local_timestamp": 1779580200,
+  "version": "https://aqua-protocol.org/docs/v4/schema",
+  "method": "scalar",
+  "hash_type": "FIPS_202-SHA3-256",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "card_number": {
+        "type": "string",
+        "pattern": "^[0-9]{13,19}$",
+        "description": "Full PAN. MUST be redacted via selective disclosure after notarization."
+      },
+      "card_expiry": {
+        "type": "string",
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{2}$",
+        "description": "Card expiration MM/YY. Redactable."
+      },
+      "card_holder_name": {
+        "type": "string",
+        "maxLength": 256,
+        "description": "Cardholder name as printed on card. Redactable."
+      },
+      "card_cvv": {
+        "type": "string",
+        "pattern": "^[0-9]{3,4}$",
+        "description": "Card verification value. MUST be redacted after notarization."
+      },
+      "card_network": {
+        "type": "string",
+        "enum": ["visa", "mastercard"],
+        "description": "Card network. Validated by WASM against BIN prefix."
+      },
+      "card_last_four": {
+        "type": "string",
+        "pattern": "^[0-9]{4}$",
+        "description": "Last four digits of PAN. Safe for receipts."
+      },
+      "luhn_verified": {
+        "type": "string",
+        "enum": ["true", "false"],
+        "description": "Luhn checksum result. Set by WASM verification."
+      },
+      "transaction_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "description": "Unique transaction reference."
+      },
+      "merchant_name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256,
+        "description": "Merchant or vendor name."
+      },
+      "amount": {
+        "type": "string",
+        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+        "description": "Payment amount."
+      },
+      "currency": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$",
+        "description": "ISO 4217 currency code."
+      },
+      "transaction_date": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO 8601 transaction timestamp."
+      },
+      "authorization_code": {
+        "type": "string",
+        "maxLength": 64,
+        "description": "Payment processor authorization code."
+      }
+    },
+    "required": [
+      "card_number",
+      "card_network",
+      "card_last_four",
+      "luhn_verified",
+      "transaction_id",
+      "merchant_name",
+      "amount",
+      "currency",
+      "transaction_date",
+      "authorization_code"
+    ],
+    "additionalProperties": false
+  },
+  "verification": {
+    "computations": [
+      {
+        "wasm": "0x0061736d0100000001190460047f7f7f7f017f60017f017f60037f7f7f017f6000017f02180104617175610f6374785f7061796c6f61645f7374720000030605010102010305030100010608017f014180e0000b071b03066d656d6f7279020005616c6c6f6300010676657269667900050ae703051101017f23002101230020006a240020010b7b01057f200041016b210141002102410021030240034020014100480d0141800220016a2d000021042004413049200441394b72044041000f0b200441306b210520030440200541026c2105200541094a0440200541096b21050b0b200220056a210220034101732103200141016b21010c000b0b2002410a70450b4301017f2000200247044041000f0b4100210302400340200320004f0d0141800220036a2d0000200120036a2d000047044041000f0b200341016a21030c000b0b41010b8a0101037f2000411047044041000f0b4180022d000041306b21014181022d000041306b21022001410446044041010f0b2001410546200241014f200241054d7171044041020f0b20014102460440200141e8076c200241e4006c6a4182022d000041306b410a6c4183022d000041306b6a6a2103200341ad114f200341a0154d71044041020f0b0b41000b860101037f4100410b418002418002100021002000410d48200041134a72044041000f0b2000100245044041030f0b200010042101200145044041000f0b4110410c41800241800210002102200241004c044041000f0b20014101460440200241204104100345044041020f0b0b2001410246044020024124410a100345044041020f0b0b41010b0b3a040041000b0b636172645f6e756d6265720041100b0c636172645f6e6574776f726b0041200b04766973610041240b0a6d617374657263617264",
+        "wasm_hash": "0x3be089c7fe21a8c5811c74723d7cd379ca9e2d988423b11b5fbd4c68c8b53019",
+        "description": "Luhn mod-10 checksum + Visa/Mastercard BIN prefix validation"
+      }
+    ],
+    "host_dependencies": [],
+    "states": [
+      "invalid_card",
+      "valid_payment",
+      "network_mismatch",
+      "luhn_failed"
+    ]
+  },
+  "bounds": {
+    "max_chain_depth": 16,
+    "structural_links": {
+      "required": 0,
+      "max": 2
+    },
+    "max_signature_branches": 4,
+    "max_timestamp_branches": 2,
+    "max_anchor_branches": 2,
+    "max_total_revisions": 128
+  },
+  "selective_disclosure": {
+    "redactable_fields": [
+      "card_number",
+      "card_expiry",
+      "card_holder_name",
+      "card_cvv"
+    ],
+    "retention_fields": [
+      "card_network",
+      "card_last_four",
+      "luhn_verified",
+      "transaction_id",
+      "merchant_name",
+      "amount",
+      "currency",
+      "transaction_date",
+      "authorization_code"
+    ],
+    "method": "merkle_tree_leaf_redaction",
+    "note": "Tree mode required. Redacted fields use .deleted suffix with null value. Merkle root integrity preserved for non-redacted fields."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "card_number": "4111111111111111",
+  "card_expiry": "12/27",
+  "card_holder_name": "Tim Bansemer",
+  "card_cvv": "737",
+  "card_network": "visa",
+  "card_last_four": "1111",
+  "luhn_verified": "true",
+  "transaction_id": "TXN-2026-0521-A7F3E9",
+  "merchant_name": "inblock.io GmbH",
+  "amount": "249.00",
+  "currency": "EUR",
+  "transaction_date": "2026-05-21T14:30:00Z",
+  "authorization_code": "AUTH-9K4M2X"
+}
